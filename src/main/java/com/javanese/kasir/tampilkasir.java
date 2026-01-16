@@ -209,7 +209,7 @@ public class tampilkasir extends javax.swing.JFrame {
 
     private void loginadminMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginadminMouseClicked
         // TODO add your handling code here:
-        
+        //buat disini ya contohnya dh ada dibawah
     }//GEN-LAST:event_loginadminMouseClicked
 
     private void buypanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buypanelMouseClicked
