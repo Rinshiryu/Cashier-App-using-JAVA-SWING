@@ -107,6 +107,12 @@ public class tampilbeli extends javax.swing.JFrame {
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/javanese/kasir/images/icons8-home-25.png"))); // NOI18N
         jButton1.setText("Home");
         jButton1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
+
 
         jButton2.setBackground(new java.awt.Color(51, 51, 255));
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -318,6 +324,11 @@ public class tampilbeli extends javax.swing.JFrame {
         // TODO add your handling code here:
         jTabbedPane1.setSelectedIndex(1);
     }//GEN-LAST:event_jButton3ActionPerformed
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {                                     
+        new tampilkasir().setVisible(true); 
+        this.dispose();                   
+    }
+
 
     /**
      * @param args the command line arguments
