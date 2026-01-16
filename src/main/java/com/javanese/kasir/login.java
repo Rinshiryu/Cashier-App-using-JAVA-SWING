@@ -142,9 +142,9 @@ public class login extends javax.swing.JFrame {
                 String role = rs.getString("role");
 
                 if (role.equals("admin")) {
-//                    JOptionPane.showMessageDialog(this, "Login Admin berhasil");
-//                    new adminboard().setVisible(true);
-//                    this.dispose();
+                    JOptionPane.showMessageDialog(this, "Login Admin berhasil");
+                    new tampiladmin().setVisible(true);
+                    this.dispose();
 
                 } else if (role.equals("user")) {
                     JOptionPane.showMessageDialog(this, "Login User berhasil");
