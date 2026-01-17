@@ -18,6 +18,7 @@ public class tampilkasir extends javax.swing.JFrame {
      */
     public tampilkasir() {
         initComponents();
+        this.setLocationRelativeTo(null);
     }
 
     /**

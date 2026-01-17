@@ -3,7 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.javanese.kasir;
-import java.awt.Graphics;
+import java.awt.*;
+//import java.sql.*;
 import javax.swing.*;
 
 
@@ -21,49 +22,118 @@ public class tampilbeli extends javax.swing.JFrame {
      */
     public tampilbeli() {
         initComponents();
-        //paksa container yg kayak anjing ini
-        cartcontainer.setLayout(
-            new BoxLayout(cartcontainer, BoxLayout.Y_AXIS)
-        );
-        cartscroll.setViewportView(cartcontainer);
-        
-        jTabbedPane1.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
-            @Override
-            protected int calculateTabAreaHeight(int tabPlacement, int runCount, int maxTabHeight) {
-                return 0;
-            }
-
-            @Override
-            protected void paintTabArea(Graphics g, int tabPlacement, int selectedIndex) {
-                // do nothing
-            }
-        });
-    }
-    
-    // constructor jika user login
+        setupCustomLogic();
+        this.setSize(1000, 600);
+        //ngatur layout
+        Container container = this.getContentPane();
+        container.setLayout(new BorderLayout());
+        container.add(jPanel2, BorderLayout.WEST);
+        container.add(jTabbedPane1, BorderLayout.CENTER);
+        this.setLocationRelativeTo(null);
+        //panggil style
+        styleSidebarButton(jButton1);
+        styleSidebarButton(jButton2);
+        styleSidebarButton(jButton3);
+        }
+// Constructor jika user login - memanggil constructor utama dengan this()
     public tampilbeli(boolean userLogin) {
-        initComponents();
+        this(); // Memanggil tampilbeli() agar setupCustomLogic() dijalankan
         this.userLogin = userLogin;
-
         if (userLogin) {
             this.diskon = 0.03; // 3%
         }
     }
 
-    // constructor jika langsung kirim diskon
+    // Constructor jika kirim diskon langsung
     public tampilbeli(double diskon) {
-        initComponents();
+        this(); // Memanggil tampilbeli()
         this.diskon = diskon;
         this.userLogin = diskon > 0;
     }
-    //tombol baru
-    public void addToCart(String nama, int harga, String imgPath) {
-        CartItemPanel item = new CartItemPanel(nama, harga, imgPath);
+
+    // Fungsi pusat agar semua pengaturan layout tidak berantakan
+    private void setupCustomLogic() {
+        // Setup Container Keranjang
+        cartcontainer.setLayout(new BoxLayout(cartcontainer, BoxLayout.Y_AXIS));
+        cartscroll.setViewportView(cartcontainer);
+        
+        // Sembunyikan Header Tab
+        jTabbedPane1.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+            @Override
+            protected int calculateTabAreaHeight(int tabPlacement, int runCount, int maxTabHeight) { return 0; }
+            @Override
+            protected void paintTabArea(Graphics g, int tabPlacement, int selectedIndex) { }
+        });
+
+        // Setup Container Produk
+        panelproduk.setLayout(new BoxLayout(panelproduk, BoxLayout.Y_AXIS));
+        firstpanel.setViewportView(panelproduk);
+        
+        loadProduk();
+        setLocationRelativeTo(null);
+    }
+    public void addToCart(String nama, int harga) {
+        // Sekarang hanya butuh nama, harga, dan fungsi hapus
+        CartItemPanel item = new CartItemPanel(nama, harga, () -> {
+            for (java.awt.Component c : cartcontainer.getComponents()) {
+                if (c instanceof CartItemPanel && nama.equals(c.getName())) {
+                    cartcontainer.remove(c);
+                    break;
+                }
+            }
+            cartcontainer.revalidate();
+            cartcontainer.repaint();
+        });
+
+        item.setName(nama); // ID untuk sistem hapus
         cartcontainer.add(item);
+        cartcontainer.add(javax.swing.Box.createVerticalStrut(10));
+
         cartcontainer.revalidate();
         cartcontainer.repaint();
 
-        jTabbedPane1.setSelectedIndex(1); // pindah ke Cart
+        // Pindah ke tab keranjang (index 1)
+        jTabbedPane1.setSelectedIndex(1); 
+    }
+
+    private void loadProduk() {
+        panelproduk.removeAll();
+        try {
+            // Gunakan koneksi Anda
+            java.sql.Connection conn = com.javanese.kasir.koneksi.getConnection(); 
+            java.sql.Statement st = conn.createStatement();
+
+            // Query tanpa img_path karena sudah dihapus di DB
+            java.sql.ResultSet rs = st.executeQuery("SELECT nama_produk, harga FROM produk");
+
+            while (rs.next()) {
+                String nama = rs.getString("nama_produk"); 
+                int harga = rs.getInt("harga");           
+
+                // Parameter ketiga (imgPath) kita ganti jadi null atau "" 
+                // karena ProductCardPanel versi terbaru sudah pakai inisial huruf
+                ProductCardPanel card = new ProductCardPanel(nama, harga, "", () -> {
+                    addToCart(nama, harga);
+                });
+
+                panelproduk.add(card);
+                panelproduk.add(javax.swing.Box.createVerticalStrut(15));
+            }
+        } catch (Exception e) {
+            System.err.println("Error Load Produk: " + e.getMessage());
+        }
+        panelproduk.add(Box.createVerticalGlue());
+        panelproduk.revalidate();
+        panelproduk.repaint();
+    }
+    //override button style
+        private void styleSidebarButton(JButton btn) {
+        btn.setContentAreaFilled(false); // Menghilangkan background kotak abu-abu
+        btn.setBorderPainted(false);     // Menghilangkan garis pinggir
+        btn.setFocusPainted(false);      // Menghilangkan garis putus-putus saat diklik
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); // Kursor jadi jari
+        btn.setHorizontalAlignment(SwingConstants.LEFT); // Teks rata kiri
+        btn.setForeground(Color.WHITE);  // Warna teks putih
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -82,13 +152,6 @@ public class tampilbeli extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         firstpanel = new javax.swing.JScrollPane();
         panelproduk = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
-        jPanel6 = new javax.swing.JPanel();
-        jPanel7 = new javax.swing.JPanel();
-        jPanel10 = new javax.swing.JPanel();
-        jPanel9 = new javax.swing.JPanel();
         secondpanel = new javax.swing.JPanel();
         cartscroll = new javax.swing.JScrollPane();
         cartcontainer = new javax.swing.JPanel();
@@ -107,12 +170,7 @@ public class tampilbeli extends javax.swing.JFrame {
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/javanese/kasir/images/icons8-home-25.png"))); // NOI18N
         jButton1.setText("Home");
         jButton1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
-            }
-        });
-
+        jButton1.addActionListener(this::jButton1ActionPerformed);
 
         jButton2.setBackground(new java.awt.Color(51, 51, 255));
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -153,127 +211,13 @@ public class tampilbeli extends javax.swing.JFrame {
                 .addComponent(jButton2)
                 .addGap(18, 18, 18)
                 .addComponent(jButton3)
-                .addContainerGap(325, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         firstpanel.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         panelproduk.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        panelproduk.setLayout(new java.awt.GridLayout(0, 2, 10, 10));
-
-        jPanel3.setBackground(new java.awt.Color(102, 102, 255));
-        jPanel3.setForeground(new java.awt.Color(255, 255, 255));
-        jPanel3.setMaximumSize(null);
-        jPanel3.setName(""); // NOI18N
-        jPanel3.setPreferredSize(new java.awt.Dimension(180, 250));
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 293, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 250, Short.MAX_VALUE)
-        );
-
-        panelproduk.add(jPanel3);
-
-        jPanel4.setBackground(new java.awt.Color(102, 102, 255));
-        jPanel4.setForeground(new java.awt.Color(255, 255, 255));
-        jPanel4.setPreferredSize(new java.awt.Dimension(180, 250));
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 293, Short.MAX_VALUE)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 250, Short.MAX_VALUE)
-        );
-
-        panelproduk.add(jPanel4);
-
-        jPanel5.setBackground(new java.awt.Color(102, 102, 255));
-        jPanel5.setForeground(new java.awt.Color(255, 255, 255));
-        jPanel5.setPreferredSize(new java.awt.Dimension(180, 250));
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 293, Short.MAX_VALUE)
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 250, Short.MAX_VALUE)
-        );
-
-        panelproduk.add(jPanel5);
-
-        jPanel6.setBackground(new java.awt.Color(51, 51, 255));
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 293, Short.MAX_VALUE)
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 250, Short.MAX_VALUE)
-        );
-
-        panelproduk.add(jPanel6);
-
-        jPanel7.setBackground(new java.awt.Color(51, 51, 255));
-
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 293, Short.MAX_VALUE)
-        );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 250, Short.MAX_VALUE)
-        );
-
-        panelproduk.add(jPanel7);
-
-        jPanel10.setBackground(new java.awt.Color(51, 51, 255));
-
-        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
-        jPanel10.setLayout(jPanel10Layout);
-        jPanel10Layout.setHorizontalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 293, Short.MAX_VALUE)
-        );
-        jPanel10Layout.setVerticalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 250, Short.MAX_VALUE)
-        );
-
-        panelproduk.add(jPanel10);
-
-        jPanel9.setBackground(new java.awt.Color(102, 102, 0));
-
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 293, Short.MAX_VALUE)
-        );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 250, Short.MAX_VALUE)
-        );
-
-        panelproduk.add(jPanel9);
-
+        panelproduk.setLayout(new javax.swing.BoxLayout(panelproduk, javax.swing.BoxLayout.Y_AXIS));
         firstpanel.setViewportView(panelproduk);
 
         jTabbedPane1.addTab("tab1", firstpanel);
@@ -324,6 +268,12 @@ public class tampilbeli extends javax.swing.JFrame {
         // TODO add your handling code here:
         jTabbedPane1.setSelectedIndex(1);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        new tampilkasir().setVisible(true); 
+        this.dispose();  
+    }//GEN-LAST:event_jButton1ActionPerformed
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {                                     
         new tampilkasir().setVisible(true); 
         this.dispose();                   
@@ -363,14 +313,7 @@ public class tampilbeli extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel panelproduk;
     private javax.swing.JPanel secondpanel;

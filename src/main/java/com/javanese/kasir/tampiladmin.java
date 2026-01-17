@@ -17,6 +17,7 @@ public class tampiladmin extends javax.swing.JFrame {
      */
     public tampiladmin() {
         initComponents();
+        this.setLocationRelativeTo(null);
     }
 
     /**
