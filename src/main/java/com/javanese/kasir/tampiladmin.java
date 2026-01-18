@@ -35,26 +35,25 @@ public class tampiladmin extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         homebtn = new javax.swing.JButton();
         belibtn = new javax.swing.JButton();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        dashboardpanel = new javax.swing.JPanel();
         dashboardtitle = new javax.swing.JLabel();
-        cardstat = new javax.swing.JPanel();
-        targetcard = new javax.swing.JPanel();
-        targetlabel = new javax.swing.JLabel();
-        targetnum = new javax.swing.JLabel();
-        totalcard = new javax.swing.JPanel();
-        totallabel = new javax.swing.JLabel();
-        totalnum = new javax.swing.JLabel();
-        unitcard = new javax.swing.JPanel();
-        unitlabel = new javax.swing.JLabel();
-        unitnum = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        panelstok = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
-        jPanel9 = new javax.swing.JPanel();
-        jPanel8 = new javax.swing.JPanel();
-        jPanel6 = new javax.swing.JPanel();
-        jPanel7 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
+        statcard = new javax.swing.JPanel();
+        danastat = new javax.swing.JPanel();
+        danatitle = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        stokstat = new javax.swing.JPanel();
+        stoktitle = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        terjualstat = new javax.swing.JPanel();
+        terjualtitle = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        stokscroll = new javax.swing.JScrollPane();
+        panelproduk = new javax.swing.JPanel();
+        buypanel = new javax.swing.JPanel();
+        buylabel = new javax.swing.JLabel();
+        jualscroll = new javax.swing.JScrollPane();
+        paneljual = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -104,236 +103,195 @@ public class tampiladmin extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jTabbedPane1.setBackground(new java.awt.Color(255, 255, 255));
+
         dashboardtitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         dashboardtitle.setText("DASHBOARD");
 
-        cardstat.setBackground(new java.awt.Color(255, 255, 255));
-        cardstat.setLayout(new java.awt.GridLayout(0, 3, 10, 10));
+        statcard.setBackground(new java.awt.Color(255, 255, 255));
+        statcard.setLayout(new java.awt.GridLayout(0, 3, 10, 10));
 
-        targetcard.setBackground(new java.awt.Color(51, 51, 255));
+        danastat.setBackground(new java.awt.Color(51, 51, 255));
 
-        targetlabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        targetlabel.setForeground(new java.awt.Color(255, 255, 255));
-        targetlabel.setText("DANA BULANAN");
-        targetlabel.setToolTipText("");
+        danatitle.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        danatitle.setForeground(new java.awt.Color(255, 255, 255));
+        danatitle.setText("DANA");
+        danatitle.setToolTipText("");
 
-        targetnum.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
-        targetnum.setForeground(new java.awt.Color(255, 255, 255));
-        targetnum.setText("0");
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("0");
 
-        javax.swing.GroupLayout targetcardLayout = new javax.swing.GroupLayout(targetcard);
-        targetcard.setLayout(targetcardLayout);
-        targetcardLayout.setHorizontalGroup(
-            targetcardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(targetcardLayout.createSequentialGroup()
-                .addContainerGap(41, Short.MAX_VALUE)
-                .addComponent(targetlabel)
-                .addGap(32, 32, 32))
-            .addGroup(targetcardLayout.createSequentialGroup()
-                .addGap(78, 78, 78)
-                .addComponent(targetnum)
+        javax.swing.GroupLayout danastatLayout = new javax.swing.GroupLayout(danastat);
+        danastat.setLayout(danastatLayout);
+        danastatLayout.setHorizontalGroup(
+            danastatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(danastatLayout.createSequentialGroup()
+                .addGap(65, 65, 65)
+                .addGroup(danastatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(danastatLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jLabel2))
+                    .addComponent(danatitle))
+                .addContainerGap(65, Short.MAX_VALUE))
+        );
+        danastatLayout.setVerticalGroup(
+            danastatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(danastatLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(danatitle)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addContainerGap(24, Short.MAX_VALUE))
+        );
+
+        statcard.add(danastat);
+
+        stokstat.setBackground(new java.awt.Color(51, 51, 255));
+
+        stoktitle.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        stoktitle.setForeground(new java.awt.Color(255, 255, 255));
+        stoktitle.setText("STOK");
+        stoktitle.setToolTipText("");
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("0");
+
+        javax.swing.GroupLayout stokstatLayout = new javax.swing.GroupLayout(stokstat);
+        stokstat.setLayout(stokstatLayout);
+        stokstatLayout.setHorizontalGroup(
+            stokstatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(stokstatLayout.createSequentialGroup()
+                .addGap(65, 65, 65)
+                .addComponent(stoktitle)
+                .addContainerGap(70, Short.MAX_VALUE))
+            .addGroup(stokstatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(stokstatLayout.createSequentialGroup()
+                    .addGap(75, 75, 75)
+                    .addComponent(jLabel3)
+                    .addContainerGap(75, Short.MAX_VALUE)))
+        );
+        stokstatLayout.setVerticalGroup(
+            stokstatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(stokstatLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(stoktitle)
+                .addContainerGap(78, Short.MAX_VALUE))
+            .addGroup(stokstatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(stokstatLayout.createSequentialGroup()
+                    .addGap(28, 28, 28)
+                    .addComponent(jLabel3)
+                    .addContainerGap(28, Short.MAX_VALUE)))
+        );
+
+        statcard.add(stokstat);
+
+        terjualstat.setBackground(new java.awt.Color(51, 51, 255));
+
+        terjualtitle.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        terjualtitle.setForeground(new java.awt.Color(255, 255, 255));
+        terjualtitle.setText("TERJUAL");
+        terjualtitle.setToolTipText("");
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("0");
+
+        javax.swing.GroupLayout terjualstatLayout = new javax.swing.GroupLayout(terjualstat);
+        terjualstat.setLayout(terjualstatLayout);
+        terjualstatLayout.setHorizontalGroup(
+            terjualstatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(terjualstatLayout.createSequentialGroup()
+                .addGap(57, 57, 57)
+                .addComponent(terjualtitle)
+                .addContainerGap(57, Short.MAX_VALUE))
+            .addGroup(terjualstatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(terjualstatLayout.createSequentialGroup()
+                    .addGap(75, 75, 75)
+                    .addComponent(jLabel4)
+                    .addContainerGap(75, Short.MAX_VALUE)))
+        );
+        terjualstatLayout.setVerticalGroup(
+            terjualstatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(terjualstatLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(terjualtitle)
+                .addContainerGap(78, Short.MAX_VALUE))
+            .addGroup(terjualstatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(terjualstatLayout.createSequentialGroup()
+                    .addGap(28, 28, 28)
+                    .addComponent(jLabel4)
+                    .addContainerGap(28, Short.MAX_VALUE)))
+        );
+
+        statcard.add(terjualstat);
+
+        stokscroll.setBackground(new java.awt.Color(255, 255, 255));
+        stokscroll.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        panelproduk.setLayout(new javax.swing.BoxLayout(panelproduk, javax.swing.BoxLayout.Y_AXIS));
+        stokscroll.setViewportView(panelproduk);
+
+        javax.swing.GroupLayout dashboardpanelLayout = new javax.swing.GroupLayout(dashboardpanel);
+        dashboardpanel.setLayout(dashboardpanelLayout);
+        dashboardpanelLayout.setHorizontalGroup(
+            dashboardpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dashboardpanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(dashboardpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(statcard, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
+                    .addGroup(dashboardpanelLayout.createSequentialGroup()
+                        .addComponent(dashboardtitle)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(stokscroll))
+                .addContainerGap())
+        );
+        dashboardpanelLayout.setVerticalGroup(
+            dashboardpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dashboardpanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(dashboardtitle)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(statcard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(stokscroll, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("tab1", dashboardpanel);
+
+        buylabel.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        buylabel.setText("BELI STOK");
+
+        jualscroll.setBackground(new java.awt.Color(255, 255, 255));
+        jualscroll.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        paneljual.setBackground(new java.awt.Color(255, 255, 255));
+        paneljual.setLayout(new javax.swing.BoxLayout(paneljual, javax.swing.BoxLayout.Y_AXIS));
+        jualscroll.setViewportView(paneljual);
+
+        javax.swing.GroupLayout buypanelLayout = new javax.swing.GroupLayout(buypanel);
+        buypanel.setLayout(buypanelLayout);
+        buypanelLayout.setHorizontalGroup(
+            buypanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(buypanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(buylabel)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(buypanelLayout.createSequentialGroup()
+                .addComponent(jualscroll)
+                .addContainerGap())
         );
-        targetcardLayout.setVerticalGroup(
-            targetcardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(targetcardLayout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(targetlabel)
-                .addGap(18, 18, 18)
-                .addComponent(targetnum)
-                .addContainerGap(54, Short.MAX_VALUE))
-        );
-
-        cardstat.add(targetcard);
-
-        totalcard.setBackground(new java.awt.Color(51, 51, 255));
-
-        totallabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        totallabel.setForeground(new java.awt.Color(255, 255, 255));
-        totallabel.setText("TOTAL STOK");
-        totallabel.setToolTipText("");
-
-        totalnum.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
-        totalnum.setForeground(new java.awt.Color(255, 255, 255));
-        totalnum.setText("0");
-
-        javax.swing.GroupLayout totalcardLayout = new javax.swing.GroupLayout(totalcard);
-        totalcard.setLayout(totalcardLayout);
-        totalcardLayout.setHorizontalGroup(
-            totalcardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, totalcardLayout.createSequentialGroup()
-                .addContainerGap(50, Short.MAX_VALUE)
-                .addComponent(totallabel)
-                .addGap(52, 52, 52))
-            .addGroup(totalcardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(totalcardLayout.createSequentialGroup()
-                    .addGap(80, 80, 80)
-                    .addComponent(totalnum)
-                    .addContainerGap(78, Short.MAX_VALUE)))
-        );
-        totalcardLayout.setVerticalGroup(
-            totalcardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(totalcardLayout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(totallabel)
-                .addContainerGap(136, Short.MAX_VALUE))
-            .addGroup(totalcardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(totalcardLayout.createSequentialGroup()
-                    .addGap(59, 59, 59)
-                    .addComponent(totalnum)
-                    .addContainerGap(59, Short.MAX_VALUE)))
+        buypanelLayout.setVerticalGroup(
+            buypanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(buypanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(buylabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jualscroll))
         );
 
-        cardstat.add(totalcard);
-
-        unitcard.setBackground(new java.awt.Color(51, 51, 255));
-        unitcard.setForeground(new java.awt.Color(255, 255, 255));
-
-        unitlabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        unitlabel.setForeground(new java.awt.Color(255, 255, 255));
-        unitlabel.setText("UNIT TERJUAL");
-
-        unitnum.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
-        unitnum.setForeground(new java.awt.Color(255, 255, 255));
-        unitnum.setText("0");
-
-        javax.swing.GroupLayout unitcardLayout = new javax.swing.GroupLayout(unitcard);
-        unitcard.setLayout(unitcardLayout);
-        unitcardLayout.setHorizontalGroup(
-            unitcardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, unitcardLayout.createSequentialGroup()
-                .addContainerGap(45, Short.MAX_VALUE)
-                .addComponent(unitlabel)
-                .addGap(47, 47, 47))
-            .addGroup(unitcardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(unitcardLayout.createSequentialGroup()
-                    .addGap(80, 80, 80)
-                    .addComponent(unitnum)
-                    .addContainerGap(78, Short.MAX_VALUE)))
-        );
-        unitcardLayout.setVerticalGroup(
-            unitcardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(unitcardLayout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(unitlabel)
-                .addContainerGap(136, Short.MAX_VALUE))
-            .addGroup(unitcardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(unitcardLayout.createSequentialGroup()
-                    .addGap(59, 59, 59)
-                    .addComponent(unitnum)
-                    .addContainerGap(59, Short.MAX_VALUE)))
-        );
-
-        cardstat.add(unitcard);
-
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-        panelstok.setLayout(new java.awt.GridLayout(0, 3, 10, 10));
-
-        jPanel5.setBackground(new java.awt.Color(102, 255, 255));
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 185, Short.MAX_VALUE)
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 239, Short.MAX_VALUE)
-        );
-
-        panelstok.add(jPanel5);
-
-        jPanel4.setBackground(new java.awt.Color(51, 0, 51));
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 185, Short.MAX_VALUE)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 239, Short.MAX_VALUE)
-        );
-
-        panelstok.add(jPanel4);
-
-        jPanel9.setBackground(new java.awt.Color(204, 204, 0));
-
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 185, Short.MAX_VALUE)
-        );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 239, Short.MAX_VALUE)
-        );
-
-        panelstok.add(jPanel9);
-
-        jPanel8.setBackground(new java.awt.Color(255, 153, 51));
-
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 185, Short.MAX_VALUE)
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 239, Short.MAX_VALUE)
-        );
-
-        panelstok.add(jPanel8);
-
-        jPanel6.setBackground(new java.awt.Color(102, 255, 255));
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 185, Short.MAX_VALUE)
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 239, Short.MAX_VALUE)
-        );
-
-        panelstok.add(jPanel6);
-
-        jPanel7.setBackground(new java.awt.Color(102, 255, 255));
-
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 185, Short.MAX_VALUE)
-        );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 239, Short.MAX_VALUE)
-        );
-
-        panelstok.add(jPanel7);
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 185, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 239, Short.MAX_VALUE)
-        );
-
-        panelstok.add(jPanel3);
-
-        jScrollPane1.setViewportView(panelstok);
+        jTabbedPane1.addTab("tab2", buypanel);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -342,29 +300,15 @@ public class tampiladmin extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(sidebar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(dashboardtitle)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cardstat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 579, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap())))
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 546, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(sidebar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(dashboardtitle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(cardstat, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -408,30 +352,29 @@ public class tampiladmin extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton belibtn;
-    private javax.swing.JPanel cardstat;
+    private javax.swing.JLabel buylabel;
+    private javax.swing.JPanel buypanel;
+    private javax.swing.JPanel danastat;
+    private javax.swing.JLabel danatitle;
+    private javax.swing.JPanel dashboardpanel;
     private javax.swing.JLabel dashboardtitle;
     private javax.swing.JButton homebtn;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JPanel panelstok;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JScrollPane jualscroll;
+    private javax.swing.JPanel paneljual;
+    private javax.swing.JPanel panelproduk;
     private javax.swing.JPanel sidebar;
-    private javax.swing.JPanel targetcard;
-    private javax.swing.JLabel targetlabel;
-    private javax.swing.JLabel targetnum;
-    private javax.swing.JPanel totalcard;
-    private javax.swing.JLabel totallabel;
-    private javax.swing.JLabel totalnum;
-    private javax.swing.JPanel unitcard;
-    private javax.swing.JLabel unitlabel;
-    private javax.swing.JLabel unitnum;
+    private javax.swing.JPanel statcard;
+    private javax.swing.JScrollPane stokscroll;
+    private javax.swing.JPanel stokstat;
+    private javax.swing.JLabel stoktitle;
+    private javax.swing.JPanel terjualstat;
+    private javax.swing.JLabel terjualtitle;
     // End of variables declaration//GEN-END:variables
 }
