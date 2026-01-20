@@ -3,7 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.javanese.kasir;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import javax.swing.JOptionPane;
+
 
 /**
  *
@@ -21,6 +24,33 @@ public class tampilkasir extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
     }
 
+    private void tambahStokLama(){
+        try {
+        String nama = JOptionPane.showInputDialog(this, "Masukkan Nama Produk:");
+        if (nama == null || nama.isEmpty()) return;
+
+        String jumlahStr = JOptionPane.showInputDialog(this, "Jumlah Stok yang Ditambah:");
+        if (jumlahStr == null || jumlahStr.isEmpty()) return;
+        
+        int tambahStok = Integer.parseInt(jumlahStr);
+
+        Connection conn = koneksi.getConnection();
+        // SQL untuk update stok berdasarkan nama
+        String sql = "UPDATE produk SET stok = stok + ? WHERE nama_produk = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, tambahStok);
+        ps.setString(2, nama);
+
+        int hasil = ps.executeUpdate();
+        if (hasil > 0) {
+            JOptionPane.showMessageDialog(this, "Stok " + nama + " berhasil diperbarui!");
+        } else {
+            JOptionPane.showMessageDialog(this, "Produk tidak ditemukan!");
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -86,6 +116,11 @@ public class tampilkasir extends javax.swing.JFrame {
         jPanel1.add(header, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 790, 180));
 
         sellpanel.setBackground(new java.awt.Color(0, 102, 255));
+        sellpanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sellpanelMouseClicked(evt);
+            }
+        });
 
         Sellicon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/javanese/kasir/images/icons8-sell-50.png"))); // NOI18N
 
@@ -211,6 +246,8 @@ public class tampilkasir extends javax.swing.JFrame {
     private void loginadminMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginadminMouseClicked
         // TODO add your handling code here:
         //buat disini ya contohnya dh ada dibawah
+        new login().setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_loginadminMouseClicked
 
     private void buypanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buypanelMouseClicked
@@ -232,6 +269,26 @@ public class tampilkasir extends javax.swing.JFrame {
             this.dispose();
         }
     }//GEN-LAST:event_buypanelMouseClicked
+
+    private void sellpanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sellpanelMouseClicked
+        // TODO add your handling code here:
+        //diteken biar muncul popup
+        String[] opsi = {"Produk Baru", "Tambah Stok (Lama)", "Batal"};
+        int pilih = javax.swing.JOptionPane.showOptionDialog(
+            this, 
+            "Pilih jenis penjualan produk:", 
+            "Manajemen Stok", 
+            javax.swing.JOptionPane.DEFAULT_OPTION, 
+            javax.swing.JOptionPane.QUESTION_MESSAGE, 
+            null, opsi, opsi[0]
+        );
+
+        if (pilih == 0) { // Produk Baru
+            new FormProdukBaru().setVisible(true);
+        } else if (pilih == 1) { // Tambah Stok
+            tambahStokLama();
+        }
+    }//GEN-LAST:event_sellpanelMouseClicked
 
     /**
      * @param args the command line arguments
