@@ -35,29 +35,29 @@ public class tampilbeli extends javax.swing.JFrame {
         styleSidebarButton(jButton2);
         styleSidebarButton(jButton3);
         }
-// Constructor jika user login - memanggil constructor utama dengan this()
+// Constructor user login
     public tampilbeli(boolean userLogin) {
-        this(); // Memanggil tampilbeli() agar setupCustomLogic() dijalankan
+        this(); // panggil tampil beli
         this.userLogin = userLogin;
         if (userLogin) {
             this.diskon = 0.03; // 3%
         }
     }
 
-    // Constructor jika kirim diskon langsung
+    // Constructor kalo kirim diskon
     public tampilbeli(double diskon) {
-        this(); // Memanggil tampilbeli()
+        this(); 
         this.diskon = diskon;
         this.userLogin = diskon > 0;
     }
 
-    // Fungsi pusat agar semua pengaturan layout tidak berantakan
+    // Fungsi ngatur layout
     private void setupCustomLogic() {
-        // Setup Container Keranjang
+        // setup Container Keranjang
         cartcontainer.setLayout(new BoxLayout(cartcontainer, BoxLayout.Y_AXIS));
         cartscroll.setViewportView(cartcontainer);
         
-        // Sembunyikan Header Tab
+        // sembunyiin header tab
         jTabbedPane1.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
             @Override
             protected int calculateTabAreaHeight(int tabPlacement, int runCount, int maxTabHeight) { return 0; }
@@ -73,7 +73,6 @@ public class tampilbeli extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
     public void addToCart(String nama, int harga) {
-        // Sekarang hanya butuh nama, harga, dan fungsi hapus
         CartItemPanel item = new CartItemPanel(nama, harga, () -> {
             for (java.awt.Component c : cartcontainer.getComponents()) {
                 if (c instanceof CartItemPanel && nama.equals(c.getName())) {
@@ -85,33 +84,28 @@ public class tampilbeli extends javax.swing.JFrame {
             cartcontainer.repaint();
         });
 
-        item.setName(nama); // ID untuk sistem hapus
+        item.setName(nama); 
         cartcontainer.add(item);
         cartcontainer.add(javax.swing.Box.createVerticalStrut(10));
 
         cartcontainer.revalidate();
         cartcontainer.repaint();
 
-        // Pindah ke tab keranjang (index 1)
+ 
         jTabbedPane1.setSelectedIndex(1); 
     }
 
     private void loadProduk() {
         panelproduk.removeAll();
         try {
-            // Gunakan koneksi Anda
             java.sql.Connection conn = com.javanese.kasir.koneksi.getConnection(); 
             java.sql.Statement st = conn.createStatement();
 
-            // Query tanpa img_path karena sudah dihapus di DB
             java.sql.ResultSet rs = st.executeQuery("SELECT nama_produk, harga FROM produk");
 
             while (rs.next()) {
                 String nama = rs.getString("nama_produk"); 
                 int harga = rs.getInt("harga");           
-
-                // Parameter ketiga (imgPath) kita ganti jadi null atau "" 
-                // karena ProductCardPanel versi terbaru sudah pakai inisial huruf
                 ProductCardPanel card = new ProductCardPanel(nama, harga, "", () -> {
                     addToCart(nama, harga);
                 });
