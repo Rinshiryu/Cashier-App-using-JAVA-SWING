@@ -124,34 +124,43 @@ public class login extends javax.swing.JFrame {
         // TODO add your handling code here:
         String username = userfield.getText();
         String password = new String(passfield.getPassword());
-        
+
         if(username.isEmpty() || password.isEmpty()){
             JOptionPane.showMessageDialog(this, "Username atau Password tidak terdeteksi");
             return;
         }
+
         try {
             Connection conn = koneksi.getConnection();
-            String sql = "SELECT role FROM user WHERE username=? AND password=?";
+            // union karena digabung
+            String sql = "SELECT 'admin' AS role_palsu FROM admin WHERE username=? AND password=? " +
+                         "UNION " +
+                         "SELECT 'user' AS role_palsu FROM user WHERE username=? AND password=?";
+
             PreparedStatement pst = conn.prepareStatement(sql);
 
+            // Isi parameter untuk pencarian di tabel admin
             pst.setString(1, username);
             pst.setString(2, password);
+
+            // Isi parameter untuk pencarian di tabel user
+            pst.setString(3, username);
+            pst.setString(4, password);
 
             ResultSet rs = pst.executeQuery();
 
             if (rs.next()) {
-                String role = rs.getString("role");
+                // Ambil nilai dari kolom 'role_palsu' yang kita buat di query tadi
+                String roleTerdeteksi = rs.getString("role_palsu");
 
-                if (role.equals("admin")) {
+                if (roleTerdeteksi.equals("admin")) {
                     JOptionPane.showMessageDialog(this, "Login Admin berhasil");
-                    new tampiladmin().setVisible(true);
+                    new tampiladmin().setVisible(true); 
                     this.dispose();
 
-                } else if (role.equals("user")) {
+                } else if (roleTerdeteksi.equals("user")) {
                     JOptionPane.showMessageDialog(this, "Login User berhasil");
-
-                    //Kirim info diskon ke board beli
-                    new tampilbeli(0.03).setVisible(true);
+                    new tampilbeli(0.03).setVisible(true); 
                     this.dispose();
                 }
             } else {

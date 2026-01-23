@@ -3,12 +3,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.javanese.kasir;
-
+import javax.swing.*;
+import java.awt.*;
+import java.sql.*;
+import javax.swing.plaf.metal.MetalTabbedPaneUI;
 /**
  *
  * @author Lenovo
  */
-public class tampiladmin extends javax.swing.JFrame {
+public final class tampiladmin extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(tampiladmin.class.getName());
 
@@ -18,8 +21,63 @@ public class tampiladmin extends javax.swing.JFrame {
     public tampiladmin() {
         initComponents();
         this.setLocationRelativeTo(null);
+        loadDataStok();
+        // Override UI TabbedPane untuk menghilangkan header (tab1, tab2, dst)
+        jTabbedPane1.setUI(new MetalTabbedPaneUI() {
+            @Override
+            protected int calculateTabAreaHeight(int tabPlacement, int horizRunCount, int maxTabHeight) {
+                return 0; // Set tinggi header tab menjadi 0
+            }
+        });
+        styleSidebarButton(homebtn);
+        styleSidebarButton(belibtn);
     }
+    public void loadDataStok() {
+        //bersihin sebelum load
+        panelproduk.removeAll();
+        panelproduk.setLayout(new BoxLayout(panelproduk, BoxLayout.Y_AXIS)); //deret kebawah
 
+        try {
+            Connection conn = koneksi.getConnection(); 
+            String sql = "SELECT nama_produk, stok FROM produk";  
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+
+            // loop data
+            while (rs.next()) {
+                String nama = rs.getString("nama_produk");
+                int stok = rs.getInt("stok");
+                ItemStok item = new ItemStok(nama, stok);
+                panelproduk.add(item);
+                panelproduk.add(Box.createRigidArea(new Dimension(0, 5))); //jarak
+            }
+            //refresdh
+            panelproduk.revalidate();
+            panelproduk.repaint();
+
+        } catch (SQLException e) {
+            System.out.println("Error Load Data: " + e.getMessage());
+        }
+    }
+    private void styleSidebarButton(JButton btn) {
+        btn.setContentAreaFilled(false); // Menghilangkan background kotak abu-abu
+        btn.setBorderPainted(false);     // Menghilangkan garis pinggir
+        btn.setFocusPainted(false);      // Menghilangkan garis putus-putus saat diklik
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); // Kursor jadi jari
+        btn.setHorizontalAlignment(SwingConstants.LEFT); // Teks rata kiri
+        btn.setForeground(Color.WHITE);  // Warna teks putih
+    
+        // Efek Hover (Berubah warna saat mouse lewat)
+//        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+//            public void mouseEntered(java.awt.event.MouseEvent evt) {
+//                btn.setContentAreaFilled(true);
+//                btn.setBackground(new java.awt.Color(255, 255, 255, 40)); // Putih transparan
+//            }
+//            public void mouseExited(java.awt.event.MouseEvent evt) {
+//                btn.setContentAreaFilled(false);
+//            }
+//        });
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

@@ -121,7 +121,7 @@ public class tampilbeli extends javax.swing.JFrame {
         panelproduk.repaint();
     }
     //override button style
-        private void styleSidebarButton(JButton btn) {
+    private void styleSidebarButton(JButton btn) {
         btn.setContentAreaFilled(false); // Menghilangkan background kotak abu-abu
         btn.setBorderPainted(false);     // Menghilangkan garis pinggir
         btn.setFocusPainted(false);      // Menghilangkan garis putus-putus saat diklik
