@@ -3,17 +3,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.javanese.kasir;
+
 import javax.swing.*;
+import javax.swing.plaf.metal.MetalTabbedPaneUI;
 import java.awt.*;
 import java.sql.*;
-import javax.swing.plaf.metal.MetalTabbedPaneUI;
-/**
- *
- * @author Lenovo
- */
+import java.util.logging.Level;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+
 public final class tampiladmin extends javax.swing.JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(tampiladmin.class.getName());
+
+    private static final java.util.logging.Logger logger =
+            java.util.logging.Logger.getLogger(tampiladmin.class.getName());
+    private Connection conn;
 
     /**
      * Creates new form tampiladmin
@@ -21,62 +27,162 @@ public final class tampiladmin extends javax.swing.JFrame {
     public tampiladmin() {
         initComponents();
         this.setLocationRelativeTo(null);
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        chartpanel.setLayout(new BorderLayout());
+
         loadDataStok();
-        // Override UI TabbedPane untuk menghilangkan header (tab1, tab2, dst)
+        
         jTabbedPane1.setUI(new MetalTabbedPaneUI() {
             @Override
             protected int calculateTabAreaHeight(int tabPlacement, int horizRunCount, int maxTabHeight) {
-                return 0; // Set tinggi header tab menjadi 0
+                return 0; 
             }
         });
         styleSidebarButton(homebtn);
         styleSidebarButton(belibtn);
     }
+    
     public void loadDataStok() {
-        //bersihin sebelum load
-        panelproduk.removeAll();
-        panelproduk.setLayout(new BoxLayout(panelproduk, BoxLayout.Y_AXIS)); //deret kebawah
+    panelproduk.removeAll();
+    panelproduk.setLayout(new BoxLayout(panelproduk, BoxLayout.Y_AXIS));
 
-        try {
-            Connection conn = koneksi.getConnection(); 
-            String sql = "SELECT nama_produk, stok FROM produk";  
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(sql);
+    initDb();
+    loadStats();
 
-            // loop data
-            while (rs.next()) {
-                String nama = rs.getString("nama_produk");
-                int stok = rs.getInt("stok");
-                ItemStok item = new ItemStok(nama, stok);
-                panelproduk.add(item);
-                panelproduk.add(Box.createRigidArea(new Dimension(0, 5))); //jarak
-            }
-            //refresdh
-            panelproduk.revalidate();
-            panelproduk.repaint();
-
-        } catch (SQLException e) {
-            System.out.println("Error Load Data: " + e.getMessage());
-        }
+    if (conn == null) {
+        return;
     }
+
+    try {
+        String sql = "SELECT nama_produk, stok FROM produk";
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+
+        while (rs.next()) {
+            String nama = rs.getString("nama_produk");
+            int stok = rs.getInt("stok");
+            ItemStok item = new ItemStok(nama, stok);
+            panelproduk.add(item);
+            panelproduk.add(Box.createRigidArea(new Dimension(0, 5)));
+        }
+
+        panelproduk.revalidate();
+        panelproduk.repaint();
+        } catch (SQLException e) {
+           logger.log(Level.SEVERE, "Error Load Data", e);
+           }
+        }
+    
+    private void initDb() {
+    conn = koneksi.getConnection();
+    if (conn == null) {
+        JOptionPane.showMessageDialog(this,
+                "Koneksi database gagal. Periksa konfigurasi class koneksi.");
+            }
+        }
+
+     private void loadStats() {
+    if (conn == null) {
+        return;
+    }
+
+    try {
+        double totalDana = 0;
+        String sqlDana = "SELECT COALESCE(SUM(dana), 0) FROM admin";
+        try (PreparedStatement ps = conn.prepareStatement(sqlDana);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                totalDana = rs.getDouble(1);
+            }
+        }
+
+        jLabel2.setText("Rp " + String.format("%,.0f", totalDana));
+
+        danastat.removeAll();
+        danastat.setLayout(new BorderLayout());
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.setOpaque(false);
+        header.add(danatitle, BorderLayout.NORTH);
+        header.add(jLabel2, BorderLayout.CENTER);
+
+        danastat.add(header, BorderLayout.CENTER);
+
+        danastat.revalidate();
+        danastat.repaint();
+
+
+        int totalStok = 0;
+        String sqlStok = "SELECT COALESCE(SUM(stok), 0) FROM produk";
+        try (PreparedStatement ps = conn.prepareStatement(sqlStok);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                totalStok = rs.getInt(1);
+            }
+        }
+        
+        jLabel3.setText(String.valueOf(totalStok));
+
+        int totalTerjual = 0;
+        String sqlTerjual = "SELECT COALESCE(SUM(jumlah), 0) FROM transaksi";
+        try (PreparedStatement ps = conn.prepareStatement(sqlTerjual);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                totalTerjual = rs.getInt(1);
+            }
+        }
+   
+        jLabel4.setText(String.valueOf(totalTerjual));
+        
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        dataset.addValue(totalStok,    "Jumlah", "Stok");
+        dataset.addValue(totalTerjual, "Jumlah", "Terjual");
+
+        JFreeChart barChart = ChartFactory.createBarChart(
+                null,                   
+                "Kategori",              
+                "Jumlah",               
+                dataset,
+                PlotOrientation.HORIZONTAL, 
+                false,                 
+                true,                    
+                false                  
+        );
+
+        ChartPanel chartPanel = new ChartPanel(barChart);
+        chartPanel.setOpaque(false);
+
+        chartpanel.removeAll();
+        chartpanel.add(chartPanel, BorderLayout.CENTER);
+        chartpanel.revalidate();
+        chartpanel.repaint();
+
+        } catch (SQLException ex) {
+            logger.log(Level.SEVERE, "Error loading stats", ex);
+        }
+
+    }
+
     private void styleSidebarButton(JButton btn) {
-        btn.setContentAreaFilled(false); // Menghilangkan background kotak abu-abu
-        btn.setBorderPainted(false);     // Menghilangkan garis pinggir
-        btn.setFocusPainted(false);      // Menghilangkan garis putus-putus saat diklik
-        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); // Kursor jadi jari
-        btn.setHorizontalAlignment(SwingConstants.LEFT); // Teks rata kiri
-        btn.setForeground(Color.WHITE);  // Warna teks putih
+        btn.setContentAreaFilled(false); 
+        btn.setBorderPainted(false);     
+        btn.setFocusPainted(false);      
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); 
+        btn.setHorizontalAlignment(SwingConstants.LEFT); 
+        btn.setForeground(Color.WHITE); 
     
         // Efek Hover (Berubah warna saat mouse lewat)
-//        btn.addMouseListener(new java.awt.event.MouseAdapter() {
-//            public void mouseEntered(java.awt.event.MouseEvent evt) {
-//                btn.setContentAreaFilled(true);
-//                btn.setBackground(new java.awt.Color(255, 255, 255, 40)); // Putih transparan
-//            }
-//            public void mouseExited(java.awt.event.MouseEvent evt) {
-//                btn.setContentAreaFilled(false);
-//            }
-//        });
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn.setContentAreaFilled(true);
+                btn.setBackground(new java.awt.Color(255, 255, 255, 40)); 
+            }
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn.setContentAreaFilled(false);
+            }
+        });
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -108,6 +214,7 @@ public final class tampiladmin extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         stokscroll = new javax.swing.JScrollPane();
         panelproduk = new javax.swing.JPanel();
+        chartpanel = new javax.swing.JPanel();
         buypanel = new javax.swing.JPanel();
         buylabel = new javax.swing.JLabel();
         jualscroll = new javax.swing.JScrollPane();
@@ -162,6 +269,7 @@ public final class tampiladmin extends javax.swing.JFrame {
         );
 
         jTabbedPane1.setBackground(new java.awt.Color(255, 255, 255));
+        jTabbedPane1.setPreferredSize(new java.awt.Dimension(800, 600));
 
         dashboardtitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         dashboardtitle.setText("DASHBOARD");
@@ -191,7 +299,7 @@ public final class tampiladmin extends javax.swing.JFrame {
                         .addGap(6, 6, 6)
                         .addComponent(jLabel2))
                     .addComponent(danatitle))
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addContainerGap(149, Short.MAX_VALUE))
         );
         danastatLayout.setVerticalGroup(
             danastatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -223,12 +331,12 @@ public final class tampiladmin extends javax.swing.JFrame {
             .addGroup(stokstatLayout.createSequentialGroup()
                 .addGap(65, 65, 65)
                 .addComponent(stoktitle)
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addContainerGap(153, Short.MAX_VALUE))
             .addGroup(stokstatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(stokstatLayout.createSequentialGroup()
                     .addGap(75, 75, 75)
                     .addComponent(jLabel3)
-                    .addContainerGap(75, Short.MAX_VALUE)))
+                    .addContainerGap(160, Short.MAX_VALUE)))
         );
         stokstatLayout.setVerticalGroup(
             stokstatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -263,12 +371,12 @@ public final class tampiladmin extends javax.swing.JFrame {
             .addGroup(terjualstatLayout.createSequentialGroup()
                 .addGap(57, 57, 57)
                 .addComponent(terjualtitle)
-                .addContainerGap(57, Short.MAX_VALUE))
+                .addContainerGap(138, Short.MAX_VALUE))
             .addGroup(terjualstatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(terjualstatLayout.createSequentialGroup()
                     .addGap(75, 75, 75)
                     .addComponent(jLabel4)
-                    .addContainerGap(75, Short.MAX_VALUE)))
+                    .addContainerGap(160, Short.MAX_VALUE)))
         );
         terjualstatLayout.setVerticalGroup(
             terjualstatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -286,23 +394,40 @@ public final class tampiladmin extends javax.swing.JFrame {
         statcard.add(terjualstat);
 
         stokscroll.setBackground(new java.awt.Color(255, 255, 255));
+        stokscroll.setBorder(null);
         stokscroll.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         panelproduk.setLayout(new javax.swing.BoxLayout(panelproduk, javax.swing.BoxLayout.Y_AXIS));
         stokscroll.setViewportView(panelproduk);
 
+        chartpanel.setBackground(new java.awt.Color(204, 204, 204));
+        chartpanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        chartpanel.setPreferredSize(new java.awt.Dimension(0, 250));
+
+        javax.swing.GroupLayout chartpanelLayout = new javax.swing.GroupLayout(chartpanel);
+        chartpanel.setLayout(chartpanelLayout);
+        chartpanelLayout.setHorizontalGroup(
+            chartpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        chartpanelLayout.setVerticalGroup(
+            chartpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 220, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout dashboardpanelLayout = new javax.swing.GroupLayout(dashboardpanel);
         dashboardpanel.setLayout(dashboardpanelLayout);
         dashboardpanelLayout.setHorizontalGroup(
             dashboardpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(dashboardpanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dashboardpanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(dashboardpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(statcard, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
-                    .addGroup(dashboardpanelLayout.createSequentialGroup()
+                .addGroup(dashboardpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(chartpanel, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
+                    .addComponent(stokscroll)
+                    .addComponent(statcard, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, dashboardpanelLayout.createSequentialGroup()
                         .addComponent(dashboardtitle)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(stokscroll))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         dashboardpanelLayout.setVerticalGroup(
@@ -313,7 +438,10 @@ public final class tampiladmin extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statcard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(stokscroll, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE))
+                .addComponent(stokscroll, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chartpanel, 224, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("tab1", dashboardpanel);
@@ -358,14 +486,14 @@ public final class tampiladmin extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(sidebar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 546, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(sidebar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -412,6 +540,7 @@ public final class tampiladmin extends javax.swing.JFrame {
     private javax.swing.JButton belibtn;
     private javax.swing.JLabel buylabel;
     private javax.swing.JPanel buypanel;
+    private javax.swing.JPanel chartpanel;
     private javax.swing.JPanel danastat;
     private javax.swing.JLabel danatitle;
     private javax.swing.JPanel dashboardpanel;

@@ -16,10 +16,32 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.33</version>
         </dependency>
+         <dependency>
+        <groupId>org.jfree</groupId>
+        <artifactId>jfreechart</artifactId>
+        <version>1.5.6</version>
+        </dependency>
+        <dependency>
+        <groupId>org.jfree</groupId>
+        <artifactId>jcommon</artifactId>
+        <version>1.0.24</version>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>25</maven.compiler.release>
         <exec.mainClass>com.javanese.kasir.Kasir</exec.mainClass>
     </properties>
+    <build>
+        <resources>
+            <!-- Anggap semua file .png/.jpg di src/main/java sebagai resource -->
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.png</include>
+                    <include>**/*.jpg</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
 </project>

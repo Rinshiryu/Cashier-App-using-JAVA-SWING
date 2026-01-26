@@ -13,16 +13,17 @@ import java.sql.SQLException;
  */
 public class koneksi {
     private static Connection conn;
-    public static Connection getConnection(){
-        if(conn == null){
-            try{
-                String url = "jdbc:mysql://localhost:3306/toko";
+
+    public static Connection getConnection() {
+        if (conn == null) {
+            try {
+                String url  = "jdbc:mysql://localhost:3306/toko";
                 String user = "root";
-                String pass = "";
+                String pass = "AsuKayang69";
                 conn = DriverManager.getConnection(url, user, pass);
                 System.out.println("Koneksi berhasil");
-            } catch (SQLException e){
-                System.out.println("koneksi gagal " + e.getMessage());
+            } catch (SQLException e) {
+                System.out.println("Koneksi gagal " + e.getMessage());
             }
         }
         return conn;
