@@ -34,6 +34,7 @@ public class tampilbeli extends javax.swing.JFrame {
         styleSidebarButton(jButton1);
         styleSidebarButton(jButton2);
         styleSidebarButton(jButton3);
+        styleSidebarButton(logoutbtn);
         }
 // Constructor user login
     public tampilbeli(boolean userLogin) {
@@ -143,6 +144,7 @@ public class tampilbeli extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        logoutbtn = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         firstpanel = new javax.swing.JScrollPane();
         panelproduk = new javax.swing.JPanel();
@@ -181,6 +183,14 @@ public class tampilbeli extends javax.swing.JFrame {
         jButton3.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jButton3.addActionListener(this::jButton3ActionPerformed);
 
+        logoutbtn.setBackground(new java.awt.Color(51, 51, 255));
+        logoutbtn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        logoutbtn.setForeground(new java.awt.Color(255, 255, 255));
+        logoutbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/javanese/kasir/images/icons8-logout-25.png"))); // NOI18N
+        logoutbtn.setText("Logout");
+        logoutbtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        logoutbtn.addActionListener(this::logoutbtnActionPerformed);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -188,6 +198,7 @@ public class tampilbeli extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(logoutbtn)
                     .addComponent(jButton1)
                     .addComponent(jLabel1)
                     .addComponent(jButton2)
@@ -205,7 +216,9 @@ public class tampilbeli extends javax.swing.JFrame {
                 .addComponent(jButton2)
                 .addGap(18, 18, 18)
                 .addComponent(jButton3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(logoutbtn)
+                .addContainerGap(32, Short.MAX_VALUE))
         );
 
         firstpanel.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -231,7 +244,7 @@ public class tampilbeli extends javax.swing.JFrame {
             secondpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(secondpanelLayout.createSequentialGroup()
                 .addComponent(cartscroll, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 217, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("tab2", secondpanel);
@@ -248,11 +261,13 @@ public class tampilbeli extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addGap(39, 39, 39))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -268,6 +283,28 @@ public class tampilbeli extends javax.swing.JFrame {
         new tampilkasir().setVisible(true); 
         this.dispose();  
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void logoutbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutbtnActionPerformed
+        // TODO add your handling code here:
+        //konfimr dulu
+        int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(
+            this, 
+            "Apakah Anda yakin ingin logout?", 
+            "Konfirmasi Logout", 
+            javax.swing.JOptionPane.YES_NO_OPTION
+        );
+        if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+            //bersihin session
+            com.javanese.kasir.login.idLoggedIn = 0; 
+            com.javanese.kasir.login.namaLoggedIn = null;
+            com.javanese.kasir.login.roleLoggedIn = null;
+
+            new com.javanese.kasir.tampilkasir().setVisible(true);
+            this.dispose(); 
+
+            javax.swing.JOptionPane.showMessageDialog(null, "Anda telah berhasil logout.");
+        }
+    }//GEN-LAST:event_logoutbtnActionPerformed
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {                                     
         new tampilkasir().setVisible(true); 
         this.dispose();                   
@@ -309,6 +346,7 @@ public class tampilbeli extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JButton logoutbtn;
     private javax.swing.JPanel panelproduk;
     private javax.swing.JPanel secondpanel;
     // End of variables declaration//GEN-END:variables

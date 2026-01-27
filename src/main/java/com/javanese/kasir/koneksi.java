@@ -19,7 +19,8 @@ public class koneksi {
             try {
                 String url  = "jdbc:mysql://localhost:3306/toko";
                 String user = "root";
-                String pass = "AsuKayang69";
+//              String pass = "AsuKayang69";
+                String pass = ""; //pake ini kalo xamppmu gk pake password
                 conn = DriverManager.getConnection(url, user, pass);
                 System.out.println("Koneksi berhasil");
             } catch (SQLException e) {

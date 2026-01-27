@@ -189,33 +189,35 @@ public class FormProdukBaru extends javax.swing.JFrame {
         String nama = txtNama.getText().trim();
         String hargaStr = txtHarga.getText().trim();
         String stokStr = txtStok.getText().trim();
-        //cek biar gk boleh kosong
+
         if (nama.isEmpty() || hargaStr.isEmpty() || stokStr.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Semua kolom harus diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
         try {
-            // harus angka
-            int harga = Integer.parseInt(hargaStr);
-            int stok = Integer.parseInt(stokStr);
+            int hargaTotal = Integer.parseInt(hargaStr);
+            int jumlah = Integer.parseInt(stokStr);
 
-            //simoen ke databse
             java.sql.Connection conn = com.javanese.kasir.koneksi.getConnection();
-            String sql = "INSERT INTO produk (nama_produk, harga, stok) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO jualan (nama_produk, jumlah, harga_total, id_penjual, nama_penjual) VALUES (?, ?, ?, ?, ?)";
             java.sql.PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, nama);
-            ps.setInt(2, harga);
-            ps.setInt(3, stok);
 
+            // parameter
+            ps.setString(1, nama);         // nama_produk
+            ps.setInt(2, jumlah);          // jumlah
+            ps.setInt(3, hargaTotal);      // harga_total
+            // MENGAMBIL DATA OTOMATIS DARI SESSION LOGIN
+            ps.setInt(4, login.idLoggedIn);    // id_penjual diambil dari variabel static login
+            ps.setString(5, login.namaLoggedIn); // nama_penjual diambil dari variabel static login
+            
             ps.executeUpdate();
-            JOptionPane.showMessageDialog(this, "Produk baru berhasil disimpan!");
+            JOptionPane.showMessageDialog(this, "Berhasil! Penawaran diposting oleh: " + login.namaLoggedIn);
 
             this.dispose();
-
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Harga dan Stok harus berupa angka!", "Error Input", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Harga dan Jumlah harus berupa angka!", "Error Input", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Gagal simpan: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Gagal simpan ke tabel Jualan: " + e.getMessage());
         }
     }//GEN-LAST:event_jualbuttonActionPerformed
 

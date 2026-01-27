@@ -24,7 +24,6 @@ public class ProductCardPanel extends JPanel {
         setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
 
         // ================= LEFT PANEL (Inisial Produk) =================
-        // Karena tidak pakai gambar, kita buat lingkaran dengan inisial nama produk
         JPanel initialPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {

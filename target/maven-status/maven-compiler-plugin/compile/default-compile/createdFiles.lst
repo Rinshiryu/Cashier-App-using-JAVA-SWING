@@ -1,10 +1,12 @@
 com\javanese\kasir\tampilbeli.class
 com\javanese\kasir\tampilkasir$3.class
+com\javanese\kasir\ItemPenawaran.class
 com\javanese\kasir\tampiladmin$1.class
 com\javanese\kasir\tampilkasir$1.class
 com\javanese\kasir\ProductCardPanel$2.class
 com\javanese\kasir\koneksi.class
 com\javanese\kasir\FormProdukBaru$1.class
+com\javanese\kasir\ItemPenawaran$1.class
 com\javanese\kasir\ProductCardPanel$1.class
 com\javanese\kasir\CartItemPanel$1.class
 com\javanese\kasir\tampiladmin.class

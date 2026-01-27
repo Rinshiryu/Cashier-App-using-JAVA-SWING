@@ -272,17 +272,26 @@ public class tampilkasir extends javax.swing.JFrame {
 
     private void sellpanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sellpanelMouseClicked
         // TODO add your handling code here:
-        //diteken biar muncul popup
+        // cek login
+        if (com.javanese.kasir.login.idLoggedIn == 0) { 
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Anda harus login terlebih dahulu untuk mengakses fitur ini!", 
+                "Akses Ditolak", 
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            // bawa ke form login
+            new com.javanese.kasir.login().setVisible(true);
+            this.dispose(); // Tutup halaman saat ini jika perlu
+            return; 
+        }
         String[] opsi = {"Produk Baru", "Tambah Stok (Lama)", "Batal"};
         int pilih = javax.swing.JOptionPane.showOptionDialog(
             this, 
-            "Pilih jenis penjualan produk:", 
+            "Halo " + com.javanese.kasir.login.namaLoggedIn + ",\nPilih jenis penjualan produk:", 
             "Manajemen Stok", 
             javax.swing.JOptionPane.DEFAULT_OPTION, 
             javax.swing.JOptionPane.QUESTION_MESSAGE, 
             null, opsi, opsi[0]
         );
-
         if (pilih == 0) { // Produk Baru
             new FormProdukBaru().setVisible(true);
         } else if (pilih == 1) { // Tambah Stok
