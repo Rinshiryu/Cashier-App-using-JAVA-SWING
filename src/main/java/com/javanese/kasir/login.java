@@ -15,7 +15,10 @@ import javax.swing.JOptionPane;
 public class login extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(login.class.getName());
-
+    // Variabel static untuk menyimpan sesi login
+    public static int idLoggedIn;
+    public static String namaLoggedIn;
+    public static String roleLoggedIn;
     /**
      * Creates new form login
      */
@@ -23,6 +26,7 @@ public class login extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -124,42 +128,33 @@ public class login extends javax.swing.JFrame {
         // TODO add your handling code here:
         String username = userfield.getText();
         String password = new String(passfield.getPassword());
-
         if(username.isEmpty() || password.isEmpty()){
             JOptionPane.showMessageDialog(this, "Username atau Password tidak terdeteksi");
             return;
         }
-
         try {
             Connection conn = koneksi.getConnection();
-            // union karena digabung
-            String sql = "SELECT 'admin' AS role_palsu FROM admin WHERE username=? AND password=? " +
+            // Query UNION yang mengambil ID asli dan Username dari masing-masing tabel
+            String sql = "SELECT id_admin AS id_asli, username AS nama_asli, 'admin' AS role_palsu FROM admin WHERE username=? AND password=? " +
                          "UNION " +
-                         "SELECT 'user' AS role_palsu FROM user WHERE username=? AND password=?";
-
+                         "SELECT id_user AS id_asli, username AS nama_asli, 'user' AS role_palsu FROM user WHERE username=? AND password=?";
             PreparedStatement pst = conn.prepareStatement(sql);
-
-            // Isi parameter untuk pencarian di tabel admin
             pst.setString(1, username);
             pst.setString(2, password);
-
-            // Isi parameter untuk pencarian di tabel user
             pst.setString(3, username);
             pst.setString(4, password);
-
             ResultSet rs = pst.executeQuery();
-
             if (rs.next()) {
-                // Ambil nilai dari kolom 'role_palsu' yang kita buat di query tadi
-                String roleTerdeteksi = rs.getString("role_palsu");
-
-                if (roleTerdeteksi.equals("admin")) {
-                    JOptionPane.showMessageDialog(this, "Login Admin berhasil");
+                // SIMPAN KE SESSION: Ambil data asli dari database
+                idLoggedIn = rs.getInt("id_asli");
+                namaLoggedIn = rs.getString("nama_asli");
+                roleLoggedIn = rs.getString("role_palsu");
+                if (roleLoggedIn.equals("admin")) {
+                    JOptionPane.showMessageDialog(this, "Selamat Datang Admin, " + namaLoggedIn);
                     new tampiladmin().setVisible(true); 
                     this.dispose();
-
-                } else if (roleTerdeteksi.equals("user")) {
-                    JOptionPane.showMessageDialog(this, "Login User berhasil");
+                } else if (roleLoggedIn.equals("user")) {
+                    JOptionPane.showMessageDialog(this, "Selamat Datang, " + namaLoggedIn);
                     new tampilbeli(0.03).setVisible(true); 
                     this.dispose();
                 }
@@ -167,7 +162,7 @@ public class login extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Username atau Password salah");
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error Login: " + e.getMessage());
         }
     }//GEN-LAST:event_loginbtnActionPerformed
 

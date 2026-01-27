@@ -31,7 +31,7 @@ public final class tampiladmin extends javax.swing.JFrame {
         chartpanel.setLayout(new BorderLayout());
 
         loadDataStok();
-        
+        loadDataPenawaran();
         jTabbedPane1.setUI(new MetalTabbedPaneUI() {
             @Override
             protected int calculateTabAreaHeight(int tabPlacement, int horizRunCount, int maxTabHeight) {
@@ -45,19 +45,15 @@ public final class tampiladmin extends javax.swing.JFrame {
     public void loadDataStok() {
     panelproduk.removeAll();
     panelproduk.setLayout(new BoxLayout(panelproduk, BoxLayout.Y_AXIS));
-
     initDb();
     loadStats();
-
     if (conn == null) {
         return;
     }
-
     try {
         String sql = "SELECT nama_produk, stok FROM produk";
         Statement st = conn.createStatement();
         ResultSet rs = st.executeQuery(sql);
-
         while (rs.next()) {
             String nama = rs.getString("nama_produk");
             int stok = rs.getInt("stok");
@@ -65,14 +61,13 @@ public final class tampiladmin extends javax.swing.JFrame {
             panelproduk.add(item);
             panelproduk.add(Box.createRigidArea(new Dimension(0, 5)));
         }
-
         panelproduk.revalidate();
         panelproduk.repaint();
         } catch (SQLException e) {
            logger.log(Level.SEVERE, "Error Load Data", e);
            }
         }
-    
+   
     private void initDb() {
     conn = koneksi.getConnection();
     if (conn == null) {
@@ -85,7 +80,6 @@ public final class tampiladmin extends javax.swing.JFrame {
     if (conn == null) {
         return;
     }
-
     try {
         double totalDana = 0;
         String sqlDana = "SELECT COALESCE(SUM(dana), 0) FROM admin";
@@ -95,23 +89,16 @@ public final class tampiladmin extends javax.swing.JFrame {
                 totalDana = rs.getDouble(1);
             }
         }
-
         jLabel2.setText("Rp " + String.format("%,.0f", totalDana));
-
         danastat.removeAll();
         danastat.setLayout(new BorderLayout());
-
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
         header.add(danatitle, BorderLayout.NORTH);
         header.add(jLabel2, BorderLayout.CENTER);
-
         danastat.add(header, BorderLayout.CENTER);
-
         danastat.revalidate();
         danastat.repaint();
-
-
         int totalStok = 0;
         String sqlStok = "SELECT COALESCE(SUM(stok), 0) FROM produk";
         try (PreparedStatement ps = conn.prepareStatement(sqlStok);
@@ -120,9 +107,7 @@ public final class tampiladmin extends javax.swing.JFrame {
                 totalStok = rs.getInt(1);
             }
         }
-        
         jLabel3.setText(String.valueOf(totalStok));
-
         int totalTerjual = 0;
         String sqlTerjual = "SELECT COALESCE(SUM(jumlah), 0) FROM transaksi";
         try (PreparedStatement ps = conn.prepareStatement(sqlTerjual);
@@ -131,9 +116,7 @@ public final class tampiladmin extends javax.swing.JFrame {
                 totalTerjual = rs.getInt(1);
             }
         }
-   
         jLabel4.setText(String.valueOf(totalTerjual));
-        
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         dataset.addValue(totalStok,    "Jumlah", "Stok");
         dataset.addValue(totalTerjual, "Jumlah", "Terjual");
@@ -162,7 +145,81 @@ public final class tampiladmin extends javax.swing.JFrame {
         }
 
     }
+     public void eksekusiBeliStok(int idJual, String nama, int qty, int harga) {
+        try {
+            Connection conn = koneksi.getConnection();
+            // cek dana admin
+            String sqlCek = "SELECT dana FROM admin WHERE id_admin = ?";
+            PreparedStatement pstCek = conn.prepareStatement(sqlCek);
+            pstCek.setInt(1, 1); // variable id admin
+            ResultSet rs = pstCek.executeQuery();
+            if (rs.next()) {
+                int danaAdmin = rs.getInt("dana");
+                if (danaAdmin < harga) {
+                    JOptionPane.showMessageDialog(this, "Dana tidak cukup! Sisa dana: Rp " + danaAdmin);
+                    return;
+                }
+                conn.setAutoCommit(false); // Mulai transaction
+                try {
+                    // Kurangi Dana Admin
+                    String sqlUpdateDana = "UPDATE admin SET dana = dana - ? WHERE id_admin = ?";
+                    PreparedStatement pstDana = conn.prepareStatement(sqlUpdateDana);
+                    pstDana.setInt(1, harga);
+                    pstDana.setInt(2, 1);
+                    pstDana.executeUpdate();
+                    // Tambah Stok di tabel Produk
+                    String sqlUpdateStok = "UPDATE produk SET stok = stok + ? WHERE nama_produk = ?";
+                    PreparedStatement pstStok = conn.prepareStatement(sqlUpdateStok);
+                    pstStok.setInt(1, qty);
+                    pstStok.setString(2, nama);
+                    pstStok.executeUpdate();
+                    // Hapus dari tabel jualan (karena sudah dibeli)
+                    String sqlHapusJualan = "DELETE FROM jualan WHERE id_jual = ?";
+                    PreparedStatement pstDel = conn.prepareStatement(sqlHapusJualan);
+                    pstDel.setInt(1, idJual);
+                    pstDel.executeUpdate();
+                    conn.commit();
+                    JOptionPane.showMessageDialog(this, "Berhasil membeli stok " + nama);
+                    //Refresh semua data di dashboard
+                    loadDataPenawaran(); 
+                    loadDataStok();
+                } catch (Exception ex) {
+                    conn.rollback();
+                    throw ex;
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal Transaksi: " + e.getMessage());
+        }
+    }
+    public void loadDataPenawaran() {
+        // Bersihin dulu
+        paneljual.removeAll();
+        paneljual.setLayout(new javax.swing.BoxLayout(paneljual, javax.swing.BoxLayout.Y_AXIS));
+        try {
+            Connection conn = koneksi.getConnection();
+            String sql = "SELECT id_jual, nama_produk, jumlah, harga_total, nama_penjual FROM jualan";
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                // Ambil data dari hasil query
+                int id = rs.getInt("id_jual");
+                String produk = rs.getString("nama_produk");
+                int qty = rs.getInt("jumlah");
+                int harga = rs.getInt("harga_total");
+                String penjual = rs.getString("nama_penjual");
 
+                ItemPenawaran item = new ItemPenawaran(id, produk, qty, harga, penjual, this);
+                paneljual.add(item);
+                // kasi jarak
+                paneljual.add(javax.swing.Box.createRigidArea(new java.awt.Dimension(0, 10)));
+            }
+            paneljual.revalidate();
+            paneljual.repaint();
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat penawaran: " + e.getMessage());
+        }
+    }
     private void styleSidebarButton(JButton btn) {
         btn.setContentAreaFilled(false); 
         btn.setBorderPainted(false);     
@@ -170,19 +227,18 @@ public final class tampiladmin extends javax.swing.JFrame {
         btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); 
         btn.setHorizontalAlignment(SwingConstants.LEFT); 
         btn.setForeground(Color.WHITE); 
-    
         // Efek Hover (Berubah warna saat mouse lewat)
-        btn.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btn.setContentAreaFilled(true);
-                btn.setBackground(new java.awt.Color(255, 255, 255, 40)); 
-            }
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btn.setContentAreaFilled(false);
-            }
-        });
+//        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+//            @Override
+//            public void mouseEntered(java.awt.event.MouseEvent evt) {
+//                btn.setContentAreaFilled(true);
+//                btn.setBackground(new java.awt.Color(255, 255, 255, 40)); 
+//            }
+//            @Override
+//            public void mouseExited(java.awt.event.MouseEvent evt) {
+//                btn.setContentAreaFilled(false);
+//            }
+//        });
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -199,6 +255,7 @@ public final class tampiladmin extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         homebtn = new javax.swing.JButton();
         belibtn = new javax.swing.JButton();
+        logoutbtn = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         dashboardpanel = new javax.swing.JPanel();
         dashboardtitle = new javax.swing.JLabel();
@@ -236,6 +293,7 @@ public final class tampiladmin extends javax.swing.JFrame {
         homebtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/javanese/kasir/images/icons8-home-25.png"))); // NOI18N
         homebtn.setText("Home");
         homebtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        homebtn.addActionListener(this::homebtnActionPerformed);
 
         belibtn.setBackground(new java.awt.Color(51, 51, 255));
         belibtn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -243,6 +301,15 @@ public final class tampiladmin extends javax.swing.JFrame {
         belibtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/javanese/kasir/images/icons8-cart-30.png"))); // NOI18N
         belibtn.setText("Beli");
         belibtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        belibtn.addActionListener(this::belibtnActionPerformed);
+
+        logoutbtn.setBackground(new java.awt.Color(51, 51, 255));
+        logoutbtn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        logoutbtn.setForeground(new java.awt.Color(255, 255, 255));
+        logoutbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/javanese/kasir/images/icons8-logout-25.png"))); // NOI18N
+        logoutbtn.setText("Logout");
+        logoutbtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        logoutbtn.addActionListener(this::logoutbtnActionPerformed);
 
         javax.swing.GroupLayout sidebarLayout = new javax.swing.GroupLayout(sidebar);
         sidebar.setLayout(sidebarLayout);
@@ -251,6 +318,7 @@ public final class tampiladmin extends javax.swing.JFrame {
             .addGroup(sidebarLayout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addGroup(sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(logoutbtn)
                     .addComponent(homebtn)
                     .addComponent(jLabel1)
                     .addComponent(belibtn))
@@ -265,6 +333,8 @@ public final class tampiladmin extends javax.swing.JFrame {
                 .addComponent(homebtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(belibtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(logoutbtn)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -299,7 +369,7 @@ public final class tampiladmin extends javax.swing.JFrame {
                         .addGap(6, 6, 6)
                         .addComponent(jLabel2))
                     .addComponent(danatitle))
-                .addContainerGap(149, Short.MAX_VALUE))
+                .addContainerGap(150, Short.MAX_VALUE))
         );
         danastatLayout.setVerticalGroup(
             danastatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -331,7 +401,7 @@ public final class tampiladmin extends javax.swing.JFrame {
             .addGroup(stokstatLayout.createSequentialGroup()
                 .addGap(65, 65, 65)
                 .addComponent(stoktitle)
-                .addContainerGap(153, Short.MAX_VALUE))
+                .addContainerGap(155, Short.MAX_VALUE))
             .addGroup(stokstatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(stokstatLayout.createSequentialGroup()
                     .addGap(75, 75, 75)
@@ -371,7 +441,7 @@ public final class tampiladmin extends javax.swing.JFrame {
             .addGroup(terjualstatLayout.createSequentialGroup()
                 .addGap(57, 57, 57)
                 .addComponent(terjualtitle)
-                .addContainerGap(138, Short.MAX_VALUE))
+                .addContainerGap(142, Short.MAX_VALUE))
             .addGroup(terjualstatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(terjualstatLayout.createSequentialGroup()
                     .addGap(75, 75, 75)
@@ -511,6 +581,38 @@ public final class tampiladmin extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void belibtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_belibtnActionPerformed
+        // TODO add your handling code here:
+        jTabbedPane1.setSelectedIndex(1);
+    }//GEN-LAST:event_belibtnActionPerformed
+
+    private void homebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homebtnActionPerformed
+        // TODO add your handling code here:
+       jTabbedPane1.setSelectedIndex(0);
+    }//GEN-LAST:event_homebtnActionPerformed
+
+    private void logoutbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutbtnActionPerformed
+        // TODO add your handling code here:
+        //konfimr dulu
+        int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(
+            this, 
+            "Apakah Anda yakin ingin logout?", 
+            "Konfirmasi Logout", 
+            javax.swing.JOptionPane.YES_NO_OPTION
+        );
+        if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+            //bersihin session
+            com.javanese.kasir.login.idLoggedIn = 0; 
+            com.javanese.kasir.login.namaLoggedIn = null;
+            com.javanese.kasir.login.roleLoggedIn = null;
+
+            new com.javanese.kasir.tampilkasir().setVisible(true);
+            this.dispose(); 
+
+            javax.swing.JOptionPane.showMessageDialog(null, "Anda telah berhasil logout.");
+        }
+    }//GEN-LAST:event_logoutbtnActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -554,6 +656,7 @@ public final class tampiladmin extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JScrollPane jualscroll;
+    private javax.swing.JButton logoutbtn;
     private javax.swing.JPanel paneljual;
     private javax.swing.JPanel panelproduk;
     private javax.swing.JPanel sidebar;
@@ -564,4 +667,5 @@ public final class tampiladmin extends javax.swing.JFrame {
     private javax.swing.JPanel terjualstat;
     private javax.swing.JLabel terjualtitle;
     // End of variables declaration//GEN-END:variables
+
 }
