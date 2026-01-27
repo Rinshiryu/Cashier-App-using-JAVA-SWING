@@ -60,6 +60,8 @@ Tabel `user`:
 
 ## 👤 Author
 **Kenny Naru**  
+**Endik**  
+**Allan**  
 Mahasiswa S1 Sistem Informasi  
 ITB STIKOM Bali  
 
